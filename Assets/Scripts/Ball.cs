@@ -14,8 +14,8 @@ public class Ball : MonoBehaviour
     {
         isOnGround = false;
         color = gameObject.name.Replace("(Clone)","");
-        
     }
+    
     void Start()
     {
         ballRb = GetComponent<Rigidbody>();

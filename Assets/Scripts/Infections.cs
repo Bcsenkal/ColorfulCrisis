@@ -6,16 +6,22 @@ public class Infections : MonoBehaviour
 {
     private PlayerController player;
     private BallSpawner ballSpawner;
+    private InfectionManager infectionManager;
     [SerializeField] private MaterialProvider materialProvider;
     [SerializeField] private float slowDownValue;
     [SerializeField] private float slowDownDuration;
     [SerializeField] private float preventToPickUpDuration;
     [SerializeField] private float stopSpawningDuration;
 
+
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         ballSpawner = FindObjectOfType<BallSpawner>();
+        infectionManager = GetComponent<InfectionManager>();
+    }
+    void Update()
+    {
     }
 
     public void GetInfectionType(string color)
@@ -24,75 +30,41 @@ public class Infections : MonoBehaviour
         switch(color)
         {
             case "Blue":
-                if(player.hasSlowedDownInfection)
-                {
-                    RestartCoroutine(SlowDownInfection());
-                }
-                else if(!player.hasSlowedDownInfection)
-                {
-                    StartCoroutine(SlowDownInfection());
-                }
+                infectionManager.slowDownTimer += slowDownDuration;
+                SlowDownInfection();
                 break;
             case "Red":
-                if(player.hasSpawnInfection)
-                {
-                    RestartCoroutine(DestroyAllBallsAndStopSpawningInfection());
-                }
-                else if(!player.hasSpawnInfection)
-                {
-                    StartCoroutine(DestroyAllBallsAndStopSpawningInfection());
-                }
+                infectionManager.stopSpawningTimer += stopSpawningDuration;
+                DestroyAllBallsAndStopSpawningInfection();
                 break;
             case "Yellow":
             {
-                if(player.hasPickUpInfection)
-                {
-                    RestartCoroutine(PreventToPickUpInfection());
-                }
-                else if(!player.hasSlowedDownInfection)
-                {
-                    StartCoroutine(PreventToPickUpInfection());
-                }
+                infectionManager.preventToPickUpTimer += preventToPickUpDuration;
+                PreventToPickUpInfection();
                 break;
             }
         }
     }
 
-    public IEnumerator DestroyAllBallsAndStopSpawningInfection()
+    public void DestroyAllBallsAndStopSpawningInfection()
     {
+        player.hasSpawnInfection = true;
+        var balls = FindObjectsOfType<Ball>();
+        foreach(Ball ball in balls)
         {
-            player.hasSpawnInfection = true;
-            var balls = FindObjectsOfType<Ball>();
-            foreach(Ball ball in balls)
-            {
-                Destroy(ball.gameObject);
-            }
-            ballSpawner.canSpawn = false;
-            yield return new WaitForSeconds(stopSpawningDuration);
-            player.hasSpawnInfection = false;
-            ballSpawner.canSpawn = true;
+            Destroy(ball.gameObject);
         }
-        
+        ballSpawner.canSpawn = false;
     }
 
-    public IEnumerator PreventToPickUpInfection()
+    public void PreventToPickUpInfection()
     {
         player.hasPickUpInfection = true;
-        yield return new WaitForSeconds(preventToPickUpDuration);
-        player.hasPickUpInfection = false;
     }
 
-    public IEnumerator SlowDownInfection()
+    public void SlowDownInfection()
     {
         player.hasSlowedDownInfection = true;
         player.currentSpeed = slowDownValue;
-        yield return new WaitForSeconds(slowDownDuration);
-        player.currentSpeed = player.defaultSpeed;
-        player.hasSlowedDownInfection = false;
-    }
-    private void RestartCoroutine(IEnumerator coroutine)
-    {
-        StopCoroutine(coroutine);
-        StartCoroutine(coroutine);
-    }
+    }    
 }
