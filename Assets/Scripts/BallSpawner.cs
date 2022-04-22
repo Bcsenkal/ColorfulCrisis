@@ -5,36 +5,55 @@ using UnityEngine;
 public class BallSpawner : MonoBehaviour
 {
     [SerializeField]private List<GameObject> ballPrefabs;
+    private float spawnTimer;
     [SerializeField]private float spawnDelay;
     [SerializeField]private float spawnInterval;
     [SerializeField]private int spawnCount;
+    [SerializeField]private int maxSpawnCount;
     [SerializeField]private float spawnOffset = 12f;
-    [SerializeField]private float IncreaseSpawnCountInterval;
+    [SerializeField]private float spawnCountIncrementTimer;
+    [SerializeField]private float SpawnCountIncrementInterval;
+    public bool canSpawn = false;
+
     void Start()
     {
-        InvokeRepeating("Spawn",spawnDelay,spawnInterval);
-        StartCoroutine(IncreaseSpawnCount());
     }
-    
-    void Spawn()
+
+    private void Update() 
     {
-        for(int i = 0; i < spawnCount ; i++)
+        if(FindObjectOfType<GameManager>().gameIsActive)
         {
-            var ball = ballPrefabs[Random.Range(0,ballPrefabs.Count)];
-            Instantiate(ball,GetRandomSpawnPoint(),ball.transform.rotation);
+            Spawn();
+            IncreaseSpawnCount();
+            spawnTimer += Time.deltaTime;
+            spawnCountIncrementTimer += Time.deltaTime;
         }
     }
+
+    private void Spawn()
+    {
+        while(canSpawn && spawnTimer > spawnInterval)
+        {
+            for(int i = 0; i < spawnCount ; i++)
+            {
+                var ball = ballPrefabs[Random.Range(0,ballPrefabs.Count)];
+                Instantiate(ball,GetRandomSpawnPoint(),ball.transform.rotation);
+            }
+            spawnTimer = 0;
+        }    
+    }
+
     Vector3 GetRandomSpawnPoint()
     {
         return new Vector3(Random.Range(-spawnOffset,spawnOffset),spawnOffset,Random.Range(-spawnOffset,8f));
     }
-    IEnumerator IncreaseSpawnCount()
+
+    private void IncreaseSpawnCount()
     {
-        do
+        while(canSpawn && spawnCount < maxSpawnCount && spawnCountIncrementTimer > SpawnCountIncrementInterval)
         {
-            yield return new WaitForSeconds(IncreaseSpawnCountInterval);
             spawnCount += 1;
+            spawnCountIncrementTimer = 0;
         }
-        while(spawnCount < 5);
     }
 }

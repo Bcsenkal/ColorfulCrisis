@@ -12,18 +12,19 @@ public class BallControls : MonoBehaviour
     [SerializeField] public GameObject currentBall;
     [SerializeField] private GameObject ballHoldPoint;
     [SerializeField] public GameObject nearbyBall;
-    [SerializeField] public bool canPickUp;
-    [SerializeField] public bool hasBall;
+
     
     void Start()
     {
         player = GetComponent<PlayerController>();
     }
+
     void Update()
     {
-        BallControl();
+        DoesPlayerHasBall();
     }
-    void Throw()
+
+    public void Throw()
     {
         if(Input.GetMouseButtonDown(0))
         {
@@ -32,35 +33,33 @@ public class BallControls : MonoBehaviour
             currentBall.transform.parent = null;
             currentBall.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * throwSpeed,ForceMode.VelocityChange);
             currentBall.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * verticalPower,ForceMode.VelocityChange);
-            hasBall = false;
             currentBall = null;
         }
     }
-    void PickUp()
+
+    public void PickUp()
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
             currentBall = GetNearbyBall();
-            currentBall.GetComponent<Ball>().playerHoldingThis = true;
-            hasBall = true;
-            currentBall.GetComponent<Rigidbody>().isKinematic = true;
-            currentBall.transform.position = ballHoldPoint.transform.position;
-            currentBall.transform.parent = ballHoldPoint.transform;
+            if(currentBall != null)
+            {
+                currentBall.GetComponent<Ball>().playerHoldingThis = true;
+                currentBall.GetComponent<Rigidbody>().isKinematic = true;
+                currentBall.transform.position = ballHoldPoint.transform.position;
+                currentBall.transform.parent = ballHoldPoint.transform;                
+            }
+
         }
     }
-    public void BallControl()
-    {
-        if(hasBall)
-        {
-            Throw();
-        }
-        if(canPickUp && !hasBall && currentBall == null)
-        {
-            PickUp();
-        }
-    }
+
     public GameObject GetNearbyBall()
     {
         return nearbyBall != null ? nearbyBall : null;
+    }
+
+    public void DoesPlayerHasBall()
+    {
+        player.hasBall = currentBall == null ? false : true;
     }
 }

@@ -6,21 +6,15 @@ using System.Linq;
 public class LiquidSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject liquidPrefab;
-    [SerializeField] private List<Material> materials;
     [SerializeField] public GameObject currentLiquid;
     [SerializeField] public string currentLiquidColor;
-
-    public Material GetMaterial(string str)
-    {
-        var material = materials.Where(m => m.name == str).SingleOrDefault();
-        return material;
-    }
+    [SerializeField] private MaterialProvider materialProvider;
 
     public void SpawnLiquid(string color)
     {
         if(currentLiquid == null)
         {
-            SetLiquidColor(GetMaterial(color));
+            SetLiquidColor(materialProvider.GetMaterial(color));
             currentLiquid = Instantiate(liquidPrefab,transform.parent.position,liquidPrefab.transform.rotation);
             currentLiquid.transform.parent = gameObject.transform.parent;
             currentLiquidColor = color;
@@ -31,15 +25,18 @@ public class LiquidSpawner : MonoBehaviour
         }
         GetComponentInParent<BoxBehaviour>().ColorMatchCheck(currentLiquidColor);
     }
+
     public void SetLiquidColor(Material material)
     {
         liquidPrefab.GetComponent<MeshRenderer>().material = material;
     }
+
     public void ChangeLiquidColor(string color)
     {
-        currentLiquid.GetComponent<MeshRenderer>().material = GetMaterial(color);
+        currentLiquid.GetComponent<MeshRenderer>().material = materialProvider.GetMaterial(color);
         currentLiquidColor = color;
     }
+    
     public void DecideNextColor(string currentcolor, string nextcolor)
     {
         if(currentcolor == "Red")

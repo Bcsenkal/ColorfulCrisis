@@ -7,13 +7,20 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRb;
     private CapsuleCollider col;
     private BallControls ballControls;
+    [SerializeField] MaterialProvider materialProvider;
     [Header("Movement")]
-    [SerializeField] private float rotationSpeed;
-    [SerializeField] public float speed = 10f;
+    [SerializeField] public float currentSpeed = 10f;
+    [SerializeField] public float defaultSpeed = 15f;
+    [SerializeField] public float infectionSpeed = 10f;
     [Header("Bounds")]
     [SerializeField] private float xBound = 0f;
     [SerializeField] private float zBound = 0f;
-    [Header("Bools")]
+    [Header("InfectionRelated")]
+    [SerializeField] public bool canPickUp;
+    [SerializeField] public bool hasBall;
+    [SerializeField] public bool hasSlowedDownInfection;
+    [SerializeField] public bool hasPickUpInfection;
+    [SerializeField] public bool hasSpawnInfection;
     
     private MousePositionProvider mousePos;
     
@@ -23,14 +30,21 @@ public class PlayerController : MonoBehaviour
         col = GetComponent<CapsuleCollider>();
         ballControls = GetComponent<BallControls>();
         mousePos = FindObjectOfType<MousePositionProvider>();
+        currentSpeed = defaultSpeed;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Move();
-        ConstraintMovement();
+        if(FindObjectOfType<GameManager>().gameIsActive)
+        {
+            Move();
+            ConstraintMovement();
+            BallControl();
+            InfectionCheck();
+        }
+        
     }
+
     void Move()
     {
         var horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -41,8 +55,9 @@ public class PlayerController : MonoBehaviour
         {
             playerRb.velocity = Vector3.zero;
         }
-        transform.Translate(movement * speed * Time.deltaTime,Space.World);
+        transform.Translate(movement * currentSpeed * Time.deltaTime,Space.World);
     }
+
     void ConstraintMovement()
     {
         if(transform.position.z < -zBound)
@@ -62,14 +77,37 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(xBound,transform.position.y,transform.position.z);
         }
     }
-    private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.tag == "Ball")
+
+    private void OnTriggerEnter(Collider other) 
+    {
+        if(other.gameObject.tag == "Ball" && !hasPickUpInfection)
         {
-            ballControls.canPickUp = true;
+            canPickUp = true;
             ballControls.nearbyBall = other.gameObject;
         }
     }
-    private void OnTriggerExit(Collider other) {
-        ballControls.canPickUp = false;
+
+    private void OnTriggerExit(Collider other) 
+    {
+        canPickUp = false;
+    }
+
+    public void BallControl()
+    {
+        if(hasBall)
+        {
+            ballControls.Throw();
+        }
+        if(canPickUp && !hasBall && ballControls.currentBall == null)
+        {
+            ballControls.PickUp();
+        }
+    }
+    private void InfectionCheck()
+    {
+        if(!hasPickUpInfection && !hasSlowedDownInfection && !hasSpawnInfection)
+        {
+            GetComponent<MeshRenderer>().material = materialProvider.GetMaterial("Player");
+        }
     }
 }

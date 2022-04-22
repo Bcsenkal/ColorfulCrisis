@@ -14,12 +14,12 @@ public class BoxManager : MonoBehaviour
     }
     public IEnumerator CorrectMatchCoroutine(GameObject box)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.6f);
         Destroy(box.GetComponentInChildren<LiquidSpawner>().currentLiquid);
     }
     public IEnumerator IncorrectMatchCoroutine(GameObject box)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.6f);
         Destroy(box.GetComponentInChildren<LiquidSpawner>().currentLiquid);
         box.SetActive(false);
         yield return new WaitForSeconds(3);
