@@ -129,5 +129,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isOnGround: 0
   playerHoldingThis: 0
-  removalDelay: 0
   color: 
+  groundTimer: 0
+  maxGroundTime: 3

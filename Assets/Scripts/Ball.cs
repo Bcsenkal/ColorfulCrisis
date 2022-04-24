@@ -7,8 +7,9 @@ public class Ball : MonoBehaviour
     public bool isOnGround;
     public bool playerHoldingThis;
     private Rigidbody ballRb;
-    [SerializeField] private float removalDelay;
     [SerializeField] public string color;
+    [SerializeField] private float groundTimer;
+    [SerializeField] private float maxGroundTime;
     
     void Awake()
     {
@@ -25,12 +26,15 @@ public class Ball : MonoBehaviour
     void Update()
     {
         CheckIfPlayerHolding();
+        GroundTimer();
+        DestroyIfOnGround();
     }
     
     private void OnCollisionStay(Collision other) 
     {
-        if(other.gameObject.tag == "Ground" && ballRb.velocity == Vector3.zero)
+        if(other.gameObject.tag == "Ground" || other.gameObject.tag == "BoxWall")
         {
+            if(ballRb.velocity == Vector3.zero)
             isOnGround = true;
         }
     }
@@ -51,6 +55,24 @@ public class Ball : MonoBehaviour
         {
             transform.rotation = transform.parent.parent.rotation;
             isOnGround = false; 
+        }
+    }
+    private void GroundTimer()
+    {
+        if(isOnGround)
+        {
+            groundTimer += Time.deltaTime;
+        }
+        else
+        {
+            groundTimer = 0;
+        }
+    }
+    private void DestroyIfOnGround()
+    {
+        if(groundTimer > maxGroundTime)
+        {
+            Destroy(gameObject);
         }
     }
 }
