@@ -7,10 +7,12 @@ public class GameManager : MonoBehaviour
 {
     public bool gameIsActive = false;
     [SerializeField] private GameObject infoScreen;
+    [SerializeField] private GameObject sliders;
 
     public void StartGame()
     {
         gameIsActive = true;
         infoScreen.SetActive(false);
+        sliders.SetActive(true);
     }
 }
