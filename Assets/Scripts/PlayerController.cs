@@ -35,14 +35,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if(FindObjectOfType<GameManager>().gameIsActive)
+        if(!FindObjectOfType<GameManager>().gameIsPaused)
         {
             Move();
             ConstraintMovement();
             BallControl();
             InfectionCheck();
         }
-        
     }
 
     void Move()
@@ -103,6 +102,7 @@ public class PlayerController : MonoBehaviour
             ballControls.PickUp();
         }
     }
+    
     private void InfectionCheck()
     {
         if(!hasPickUpInfection && !hasSlowedDownInfection && !hasSpawnInfection)

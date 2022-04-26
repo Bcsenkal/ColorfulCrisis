@@ -20,9 +20,6 @@ public class Infections : MonoBehaviour
         ballSpawner = FindObjectOfType<BallSpawner>();
         infectionManager = GetComponent<InfectionManager>();
     }
-    void Update()
-    {
-    }
 
     public void GetInfectionType(string color)
     {

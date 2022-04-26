@@ -14,14 +14,10 @@ public class BallSpawner : MonoBehaviour
     [SerializeField]private float spawnCountIncrementTimer;
     [SerializeField]private float SpawnCountIncrementInterval;
     public bool canSpawn = false;
-
-    void Start()
-    {
-    }
-
+    
     private void Update() 
     {
-        if(FindObjectOfType<GameManager>().gameIsActive)
+        if(!FindObjectOfType<GameManager>().gameIsPaused)
         {
             Spawn();
             IncreaseSpawnCount();
@@ -40,7 +36,7 @@ public class BallSpawner : MonoBehaviour
                 Instantiate(ball,GetRandomSpawnPoint(),ball.transform.rotation);
             }
             spawnTimer = 0;
-        }    
+        }
     }
 
     Vector3 GetRandomSpawnPoint()

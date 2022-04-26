@@ -93,11 +93,11 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1840588329594500167}
-  m_Material: {fileID: 13400000, guid: 1606e1792aaecd745b20f54ba33ebb83, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.507
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &-77277842671586429
 Rigidbody:
@@ -132,3 +132,5 @@ MonoBehaviour:
   color: 
   groundTimer: 0
   maxGroundTime: 3
+  maxGroundTimeMinValue: 3
+  maxGroundTimeMaxValue: 7

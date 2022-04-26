@@ -10,11 +10,14 @@ public class Ball : MonoBehaviour
     [SerializeField] public string color;
     [SerializeField] private float groundTimer;
     [SerializeField] private float maxGroundTime;
+    [SerializeField] private float maxGroundTimeMinValue;
+    [SerializeField] private float maxGroundTimeMaxValue;
     
     void Awake()
     {
         isOnGround = false;
         color = gameObject.name.Replace("(Clone)","");
+        GetRandomMaxGroundTime();
     }
     
     void Start()
@@ -38,6 +41,7 @@ public class Ball : MonoBehaviour
             isOnGround = true;
         }
     }
+
     private void OnTriggerEnter(Collider other) 
     {
         if(other.gameObject.tag == "Sensor")
@@ -49,6 +53,7 @@ public class Ball : MonoBehaviour
             }
         }
     }
+
     private void CheckIfPlayerHolding()
     {
         if(playerHoldingThis)
@@ -57,6 +62,7 @@ public class Ball : MonoBehaviour
             isOnGround = false; 
         }
     }
+
     private void GroundTimer()
     {
         if(isOnGround)
@@ -68,11 +74,17 @@ public class Ball : MonoBehaviour
             groundTimer = 0;
         }
     }
+
     private void DestroyIfOnGround()
     {
         if(groundTimer > maxGroundTime)
         {
             Destroy(gameObject);
         }
+    }
+    
+    private void GetRandomMaxGroundTime()
+    {
+        maxGroundTime = Random.Range(maxGroundTimeMinValue,maxGroundTimeMaxValue);
     }
 }
