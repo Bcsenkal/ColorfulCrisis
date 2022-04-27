@@ -14,6 +14,7 @@ public class LiquidSlider : MonoBehaviour
     {
         slider = GetComponent<Slider>();
         gameManager = FindObjectOfType<GameManager>();
+        slider.maxValue = GetRandomMaxValue();
     }
 
     private void Update() 
@@ -27,7 +28,7 @@ public class LiquidSlider : MonoBehaviour
 
     private void UpdateSliderValue(float nextvalue,float speed)
     {
-        slider.value = Mathf.Lerp(slider.value,nextvalue,speed * Time.deltaTime);
+        slider.value = Mathf.MoveTowards(slider.value,nextvalue,speed * Time.deltaTime);
     }
 
     public void SetNextValue(bool check)
@@ -52,5 +53,10 @@ public class LiquidSlider : MonoBehaviour
         {
             nextValue = slider.minValue;
         }
+    }
+
+    private int GetRandomMaxValue()
+    {
+        return Random.Range(7,16);
     }
 }

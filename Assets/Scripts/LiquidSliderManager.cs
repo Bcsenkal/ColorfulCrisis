@@ -9,21 +9,17 @@ public class LiquidSliderManager : MonoBehaviour
     [SerializeField] private Slider purpleSlider;
     [SerializeField] private Slider greenSlider;
     [SerializeField] private Slider orangeSlider;
-    [Header("SlidersMaxValues")]
-    [SerializeField] private float orangeSliderMaxValue;
-    [SerializeField] private float greenSliderMaxValue;
-    [SerializeField] private float purpleSliderMaxValue;
+    private GameManager gameManager;
+    private void Start() 
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
     
-    private void Start()
+    private void Update()
     {
-        SetSlidersMaxValue();
+        CheckWinCondition();
     }
-    private void SetSlidersMaxValue()
-    {
-        purpleSlider.maxValue = purpleSliderMaxValue;
-        orangeSlider.maxValue = orangeSliderMaxValue;
-        greenSlider.maxValue = greenSliderMaxValue;
-    }
+
     public Slider GetSlider(string color)
     {
         if(color == "Purple")
@@ -50,26 +46,20 @@ public class LiquidSliderManager : MonoBehaviour
             slider.GetComponent<LiquidSlider>().SetNextValue(check);
         }
     }
+
+    private bool IsSliderFull(Slider slider)
+    {
+        return slider.value == slider.maxValue;
+    }
     
+    private void CheckWinCondition()
+    {
+        if(IsSliderFull(purpleSlider) && IsSliderFull(greenSlider) && IsSliderFull(orangeSlider))
+        {
+            gameManager.Win();
+        }
+    }
     
-    
-    
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 

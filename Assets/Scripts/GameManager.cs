@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject infoScreen;
     [SerializeField] private GameObject sliders;
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject winScreen;
+    static GameManager instance;
     
     private void Awake() 
     {
@@ -76,5 +78,10 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void Win()
+    {
+        gameIsActive = false;
+        winScreen.SetActive(true);
     }
 }
